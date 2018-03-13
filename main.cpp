@@ -1,9 +1,13 @@
 #include <QCoreApplication>
 #include <QtSql>
 
+#include "Entity.cpp"
+
 int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
+
+  Entity entity;
 
   QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL");
   db.setHostName("127.0.0.1");
@@ -15,6 +19,7 @@ int main(int argc, char *argv[])
 
   if ( ok ) {
     qDebug() << "Connect to database...";
+//    QSqlQuery ins("INSERT INTO section(section_title) VALUES ('goods')");
     QSqlQuery query("SELECT section_title FROM section");
     while (query.next())
     {
