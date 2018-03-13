@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
   if ( ok ) {
     qDebug() << "Connect to database...";
-//    QSqlQuery ins("INSERT INTO section(section_title) VALUES ('goods')");
+    QSqlQuery ins("INSERT INTO section(section_title) VALUES ('goods')");
     QSqlQuery query("SELECT section_title FROM section");
     while (query.next())
     {
