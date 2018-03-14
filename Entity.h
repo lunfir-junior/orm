@@ -1,18 +1,16 @@
+//#include <QObject>
 #include <QString>
+#include <QtSql>
 #include <QDebug>
 
-class Entity
-{
-  public:
-    explicit Entity()
-    {
-      qDebug() << __PRETTY_FUNCTION__ << deleteQuery;
-    }
+#include <typeinfo>
 
-    virtual ~Entity()
-    {
-      qDebug() << __PRETTY_FUNCTION__;
-    }
+//#include "A.h"
+
+template <class T>
+class Entity/* : public A*//* : public QObject*/
+{
+//    Q_OBJECT
 
     static QString deleteQuery;
     static QString insertQuery;
@@ -21,14 +19,44 @@ class Entity
     static QString updateQuery;
 
   private:
+//    QObject *test;
+    QSqlDatabase m_db;
+    QList<T> m_fields;
+    T m_id;
+    bool m_loaded;
+    bool m_modified;
+    const char* m_table;
+
+  public:
+    explicit Entity(T id = nullptr/*, QObject *parent = nullptr*/)
+    {
+      m_id = id;
+      m_loaded = false;
+      m_modified = false;
+//      m_table = this->metaObject()->className();
+      m_table = typeid(this).name();
+
+      qDebug() << __PRETTY_FUNCTION__ << "  " << m_table;
+    }
+
+    virtual ~Entity()
+    {
+      qDebug() << __PRETTY_FUNCTION__;
+    }
 
 };
 
-QString Entity::deleteQuery  = QString ("DELETE FROM %1 WHERE %1_id=%2");  //%1 - table
-QString Entity::insertQuery  = QString ("INSERT INTO %1(%2) VALUES (%3) RETURNING %1_id");
-QString Entity::listQuery    = QString ("SELECT * FROM %1");
-QString Entity::selectQuery  = QString ("SELECT * FROM %1 WHERE %1_id=%3");
-QString Entity::updateQuery  = QString ("UPDATE %1 SET %2 WHERE %1_id=%3"); //%2 - columns
+//template <class T>
+//QString Entity<T>::deleteQuery  = QString ("DELETE FROM %1 WHERE %1_id=%2");  //%1 - table
+
+//template <class T>
+//QString Entity<T>::insertQuery  = QString ("INSERT INTO %1(%2) VALUES (%3) RETURNING %1_id");
+//template <class T>
+//QString Entity<T>::listQuery    = QString ("SELECT * FROM %1");
+//template <class T>
+//QString Entity<T>::selectQuery  = QString ("SELECT * FROM %1 WHERE %1_id=%3");
+//template <class T>
+//QString Entity<T>::updateQuery  = QString ("UPDATE %1 SET %2 WHERE %1_id=%3"); //%2 - columns
 
 
 //class DatabaseError(Exception):
