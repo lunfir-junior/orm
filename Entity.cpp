@@ -72,7 +72,36 @@ void Entity::setColumn(QString name, Entity *value)
 
 void Entity::setParent(QString name, int id)
 {
+  Q_UNUSED(name);
+  Q_UNUSED(id);
+  // put parent id into fields with <name>_<id> as a key
+}
 
+void Entity::load()
+{
+  // check, if current object is already loaded
+  // get a single row from corresponding table by id
+  // store columns as object fields with unchanged column names as keys
+}
+
+void Entity::insert()
+{
+  // execute an insert query, built from fields keys and values
+}
+
+void Entity::update()
+{
+  // execute an update query, built from fields keys and values
+}
+
+void Entity::destroy()
+{
+  // execute a delete query with current instance id
+}
+
+void Entity::save()
+{
+  // execute either insert or update query, depending on instance id
 }
 
 

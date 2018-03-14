@@ -47,8 +47,23 @@ public:
 
     return out; }
 
+  template<class T>
+  QList<T> all(T cls) {
+    QList<T> out;
+    T alpha; T beta;
+    out.push_back(alpha);
+    out.push_back(beta);
+    return out;
+    // select ALL rows and ALL columns from corresponding table
+    // convert each row from ResultSet to instance of class T with appropriate id
+    // fill each of new instances with column data
+    // aggregate all new instances into a single List<T> and return it
+  }
+
   void setColumn(QString name, Entity *value);
   void setParent(QString name, int id);
+  void destroy();
+  void save();
 
 private:
   static QSqlDatabase db;
@@ -59,77 +74,13 @@ private:
   static QString childrenQuery;
   static QString updateQuery;
 
+  void load();
+  void insert();
+  void update();
+
 signals:
 
 public slots:
 };
 
 #endif // ENTITY_H
-
-//    public final void setParent(String name, Integer id) {
-//        // put parent id into fields with <name>_<id> as a key
-//    }
-
-//    private void load() {
-//        // check, if current object is already loaded
-//        // get a single row from corresponding table by id
-//        // store columns as object fields with unchanged column names as keys
-//    }
-
-//    private void insert() throws SQLException {
-//        // execute an insert query, built from fields keys and values
-//    }
-
-//    private void update() throws SQLException {
-//        // execute an update query, built from fields keys and values
-//    }
-
-//    public final void delete() throws SQLException {
-//        // execute a delete query with current instance id
-//    }
-
-//    public final void save() throws SQLException {
-//        // execute either insert or update query, depending on instance id
-//    }
-
-//    protected static <T extends Entity> List<T> all(Class<T> cls) {
-//        // select ALL rows and ALL columns from corresponding table
-//        // convert each row from ResultSet to instance of class T with appropriate id
-//        // fill each of new instances with column data
-//        // aggregate all new instances into a single List<T> and return it
-//    }
-
-//    private static Collection<String> genPlaceholders(int size) {
-//        // return a collection, consisting of <size> "?" symbols,
-//        // which should be joined later.
-//        // each "?" is used in insert statements as a placeholder for values (google prepared statements)
-//    }
-
-//    private static Collection<String> genPlaceholders(int size, String placeholder) {
-//        // return a collection, consisting of <size> <placeholder> symbols,
-//        // which should be joined later.
-//        // each <placeholder> is used in insert statements as a placeholder for values (google prepared statements)
-//    }
-
-//    private static String getJoinTableName(String leftTable, String rightTable) {
-//        // generate the name of associative table for many-to-many relation
-//        // sort left and right tables alphabetically
-//        // return table name using format <table>__<table>
-//    }
-
-//    private java.util.Date getDate(String column) {
-//        // pwoerful method, used to remove copypaste from getCreated and getUpdated methods
-//    }
-
-//    private static String join(Collection<String> sequence) {
-//        // join collection of strings with ", " as <glue> and return a joined string
-//    }
-
-//    private static String join(Collection<String> sequence, String glue) {
-//        // join collection of strings with <glue> and return a joined string
-//    }
-
-//    private static <T extends Entity> List<T> rowsToEntities(Class<T> cls, ResultSet rows) {
-//        // convert a ResultSet of database rows to list of instances of corresponding class
-//        // each instance must be filled with its data so that it must not produce additional queries to database to get it's fields
-//    }
