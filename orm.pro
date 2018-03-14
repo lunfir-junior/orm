@@ -9,7 +9,11 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    Entity.cpp \
+    Article.cpp \
+    Category.cpp \
+    Tag.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -24,4 +28,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += \
     Entity.h \
-    A.h
+    Article.h \
+    Category.h \
+    Tag.h
