@@ -59,8 +59,6 @@ private:
   void insert();
   void update();
 
-
-
 signals:
 
 public slots:

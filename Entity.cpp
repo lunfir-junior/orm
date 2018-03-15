@@ -45,13 +45,17 @@ void Entity::retrieve()
   m_table = QString::fromUtf8(metaObject()->className()).toLower();
   QSqlQuery query(Entity::selectQuery.arg(m_table, QString::number(m_id)));
 
-  while ( query.next() ) {
-    qWarning() << query.value(0).toString();
-    qWarning() << query.value(1).toString();
-    qWarning() << query.value(2).toString();
-    qWarning() << query.value(3).toString();
-    qWarning() << query.value(4).toString();
+  for ( int i = 0; query.next(); i++ ) {
+    if ( query.value(i).toString() != "" )
+      qWarning() << query.value(i).toString();
   }
+//  while (  ) {
+//    qWarning() << query.value(0).toString();
+//    qWarning() << query.value(1).toString();
+//    qWarning() << query.value(2).toString();
+//    qWarning() << query.value(3).toString();
+//    qWarning() << query.value(4).toString();
+//  }
 }
 
 Entity::~Entity()
@@ -80,7 +84,11 @@ QDateTime Entity::getUpdated()
 
 void Entity::load()
 {
-  // check, if current object is already loaded
+  if ( m_isLoaded )
+    return;
+
+
+
   // get a single row from corresponding table by id
   // store columns as object fields with unchanged column names as keys
 }
@@ -97,7 +105,12 @@ void Entity::update()
 
 void Entity::destroy()
 {
-  // execute a delete query with current instance id
+  if ( !db.isOpen() ) {
+    qWarning() << "No db connect";
+    return;
+  }
+
+  QSqlQuery query(Entity::deleteQuery.arg(m_table, QString::number(m_id)));
 }
 
 void Entity::save()
