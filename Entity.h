@@ -19,33 +19,14 @@ public:
   bool m_isLoaded;
   bool m_isModified;
   QString m_table;
-  QMap<QString, Entity*> m_fields;
+  QMap<QString, QString> m_fields;
 
   static bool setDatabase(QString host, QString dbName, QString user, QString password);
 
   int getId();
   QDateTime getCreated();
   QDateTime getUpdated();
-  Entity* getColumn(QString name);
-
-  template<class T>
-  T getParent(T cls) {
-    // get parent id from fields as <classname>_id, create and return an instance of class T with that id
-    T def; return def; }
-
-  template<class T>
-  QList<T> getSiblings(T cls) {
-    QList<T> out;
-    T alpha; T beta;
-    out.push_back(alpha);
-    out.push_back(beta);
-
-    // select needed rows and ALL columns from corresponding table
-    // convert each row from ResultSet to instance of class T with appropriate id
-    // fill each of new instances with column data
-    // return list of children instances
-
-    return out; }
+  QString getColumn(QString name);
 
   template<class T>
   QList<T> all(T cls) {
@@ -60,10 +41,10 @@ public:
     // aggregate all new instances into a single List<T> and return it
   }
 
-  void setColumn(QString name, Entity *value);
-  void setParent(QString name, int id);
+  void setColumn(QString name, QString value);
   void destroy();
   void save();
+  void retrieve();
 
 private:
   static QSqlDatabase db;
@@ -77,6 +58,8 @@ private:
   void load();
   void insert();
   void update();
+
+
 
 signals:
 

@@ -13,7 +13,8 @@ SOURCES += main.cpp \
     Entity.cpp \
     Article.cpp \
     Category.cpp \
-    Tag.cpp
+    Tag.cpp \
+    Section.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -30,4 +31,5 @@ HEADERS += \
     Entity.h \
     Article.h \
     Category.h \
-    Tag.h
+    Tag.h \
+    Section.h
