@@ -24,8 +24,8 @@ public:
   static bool setDatabase(QString host, QString dbName, QString user, QString password);
 
   int getId();
-  QDateTime getCreated();
-  QDateTime getUpdated();
+  int getCreated();
+  int getUpdated();
   QString getColumn(QString name);
 
   template<class T>
@@ -44,7 +44,8 @@ public:
   void setColumn(QString name, QString value);
   void destroy();
   void save();
-  void retrieve();
+  void load();
+  void insert();
 
 private:
   static QSqlDatabase db;
@@ -55,9 +56,10 @@ private:
   static QString childrenQuery;
   static QString updateQuery;
 
-  void load();
-  void insert();
   void update();
+
+  QString values();
+  QString keys();
 
 signals:
 

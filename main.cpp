@@ -11,12 +11,18 @@ int main(int argc, char *argv[])
 {
   QCoreApplication a(argc, argv);
 
-  bool ok = Entity::setDatabase(QString("127.0.0.1"), QString("schema"), QString("lunfir"), QString("lunfir"));
+  /*bool ok = */Entity::setDatabase(QString("127.0.0.1"), QString("schema"), QString("lunfir"), QString("lunfir"));
   Section section(2);
 
-  section.retrieve();
+  section.insert();
 
-  Tag tag(2);
+//  section.load();
+  qDebug() << "created: " << section.getCreated();
+
+//  section.retrieve();
+//  qDebug() << "date time: " << section.getCreated();
+
+//  Tag tag(2);
 //  tag.retrieve();
 
 //  qDebug() << "article.getId(): " << article.getId();

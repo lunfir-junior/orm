@@ -31,31 +31,8 @@ Entity::Entity(int id, QObject *parent) : QObject(parent)
   m_isLoaded = false;
   m_isModified = false;
 
+//  this->load();
 //  # select from article where article_id=?
-}
-
-void Entity::retrieve()
-{
-  if ( !db.isOpen() ) {
-    qWarning() << "No db connect";
-    return;
-  }
-
-  m_isLoaded = true;
-  m_table = QString::fromUtf8(metaObject()->className()).toLower();
-  QSqlQuery query(Entity::selectQuery.arg(m_table, QString::number(m_id)));
-
-  for ( int i = 0; query.next(); i++ ) {
-    if ( query.value(i).toString() != "" )
-      qWarning() << query.value(i).toString();
-  }
-//  while (  ) {
-//    qWarning() << query.value(0).toString();
-//    qWarning() << query.value(1).toString();
-//    qWarning() << query.value(2).toString();
-//    qWarning() << query.value(3).toString();
-//    qWarning() << query.value(4).toString();
-//  }
 }
 
 Entity::~Entity()
@@ -68,38 +45,114 @@ int Entity::getId()
   return m_id;
 }
 
-QDateTime Entity::getCreated()
+int Entity::getCreated()
 {
-  QDateTime out = QDateTime::currentDateTime();
+  if ( m_isLoaded )
+    return m_fields.value(QString(m_table + "created")).toInt();
 
+  if ( !db.isOpen() ) {
+    qWarning() << "No db connect";
+    return -1;
+  }
+
+  int out;
+  QSqlQuery query(QString("SELECT %1_created FROM %1 WHERE %1_id=%2").arg(m_table, QString::number(m_id)));
+
+  while ( query.next() ) {
+    out = query.value(0).toInt();
+  }
   return out;
 }
 
-QDateTime Entity::getUpdated()
+int Entity::getUpdated()
 {
-  QDateTime out = QDateTime::currentDateTime();
+  if ( m_isLoaded )
+    return m_fields.value(QString(m_table + "updated")).toInt();
 
+  if ( !db.isOpen() ) {
+    qWarning() << "No db connect";
+    return -1;
+  }
+
+  int out;
+  QSqlQuery query(QString("SELECT %1_updated FROM %1 WHERE %1_id=%2").arg(m_table, QString::number(m_id)));
+
+  while ( query.next() ) {
+    out = query.value(0).toInt();
+  }
   return out;
 }
 
 void Entity::load()
 {
-  if ( m_isLoaded )
+  if ( !db.isOpen() ) {
+    qWarning() << "No db connect";
     return;
+  }
 
+  if ( m_isLoaded ) {
+    qWarning() << "Already loaded";
+    return;
+  }
 
+  m_table = QString::fromUtf8(metaObject()->className()).toLower();
+  QSqlQuery query(Entity::selectQuery.arg(m_table, QString::number(m_id)));
+  QSqlRecord rec = query.record();
+  int count = rec.count();
 
-  // get a single row from corresponding table by id
-  // store columns as object fields with unchanged column names as keys
+  while ( query.next() ) {
+    for ( int i = 0; i < count; i++ ) {
+      m_fields.insert(rec.fieldName(i), query.value(i).toString());
+      qWarning() << rec.fieldName(i) << "   " << query.value(i).toString();
+    }
+  }
+
+  qDebug() << m_fields;
 }
 
 void Entity::insert()
 {
-  // execute an insert query, built from fields keys and values
+  if ( !db.isOpen() ) {
+    qWarning() << "No db connect";
+    return;
+  }
+
+  if ( !m_isLoaded )
+    load();
+
+  m_table = QString::fromUtf8(metaObject()->className()).toLower();
+  QString keys, values;
+
+  keys = this->keys();
+  values = this->values();
+
+  QSqlQuery query(Entity::insertQuery.arg(m_table, keys, values));
+
+  if ( !query.exec() )
+    qWarning() << query.lastError();
 }
 
 void Entity::update()
 {
+  if ( !db.isOpen() ) {
+    qWarning() << "No db connect";
+    return;
+  }
+
+  if ( !m_isLoaded )
+    load();
+
+  m_table = QString::fromUtf8(metaObject()->className()).toLower();
+  QString keys, values, set;
+  int len = m_fields.size();
+  keys = this->keys();
+  values = this->values();
+
+//  "UPDATE %1 SET %2 WHERE %1_id=%3";
+  QSqlQuery query(Entity::updateQuery.arg(m_table, ))
+
+  if ( !query.exec() )
+    qWarning() << query.lastError();
   // execute an update query, built from fields keys and values
 }
 
@@ -110,11 +163,13 @@ void Entity::destroy()
     return;
   }
 
+  m_table = QString::fromUtf8(metaObject()->className()).toLower();
   QSqlQuery query(Entity::deleteQuery.arg(m_table, QString::number(m_id)));
 }
 
 void Entity::save()
 {
+  m_table = QString::fromUtf8(metaObject()->className()).toLower();
   // execute either insert or update query, depending on instance id
 }
 
@@ -129,4 +184,36 @@ void Entity::setColumn(QString name, QString value)
 }
 
 
+QString Entity::values()
+{
+  QString out;
+  QList<QString> valueList = m_fields.values();
+  int lim = valueList.size() - 1;
 
+  for ( int i = 0; i < lim; i++ ) {
+    out.append("'");
+    out.append(valueList.at(i));
+    out.append("'");
+    out.append(", ");
+  }
+  out.append("'");
+  out.append(valueList.takeLast());
+  out.append("'");
+
+  return out;
+}
+
+QString Entity::keys()
+{
+  QString out;
+  QList<QString> keyList = m_fields.keys();
+  int lim = keyList.size() - 1;
+
+  for ( int i = 0; i < lim; i++ ) {
+    out.append(keyList.at(i));
+    out.append(", ");
+  }
+   out.append(keyList.takeLast());
+
+   return out;
+}
