@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
   section.save();
   qDebug() << section.getColumn(QString("section_title"));
 
+  QList<Section> sectionList = section.all(section);
+
   a.quit();
 
   return 0;

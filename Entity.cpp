@@ -32,14 +32,33 @@ Entity::Entity(int id, QObject *parent) : QObject(parent)
   m_isModified = false;
 }
 
+Entity::Entity(const Entity &other)
+  : QObject(other.parent()),
+    m_id(other.getId()),
+    m_isLoaded(other.getIsLoaded()),
+    m_isModified(other.getIsModified())
+{
+
+}
+
 Entity::~Entity()
 {
 
 }
 
-int Entity::getId()
+int Entity::getId() const
 {
   return m_id;
+}
+
+bool Entity::getIsLoaded() const
+{
+  return m_isLoaded;
+}
+
+bool Entity::getIsModified() const
+{
+  return m_isModified;
 }
 
 int Entity::getCreated()
@@ -222,4 +241,22 @@ QString Entity::keys()
    out.append(keyList.takeLast());
 
    return out;
+}
+
+Entity& Entity::operator=(const Entity *other)
+{
+  this->m_id = other->getId();
+  this->m_isLoaded = other->getIsLoaded();
+  this->m_isModified = other->getIsModified();
+
+  return *this;
+}
+
+Entity& Entity::operator=(const Entity &other)
+{
+  this->m_id = other.getId();
+  this->m_isLoaded = other.getIsLoaded();
+  this->m_isModified = other.getIsModified();
+
+  return *this;
 }

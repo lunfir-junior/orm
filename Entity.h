@@ -12,6 +12,7 @@ class Entity : public QObject
 public:
   explicit Entity(QObject *parent = nullptr);
   explicit Entity(int id, QObject *parent = nullptr);
+  Entity(const Entity &other);
 
   virtual ~Entity();
 
@@ -23,7 +24,9 @@ public:
 
   static bool setDatabase(QString host, QString dbName, QString user, QString password);
 
-  int getId();
+  int getId() const;
+  bool getIsLoaded() const;
+  bool getIsModified() const;
   int getCreated();
   int getUpdated();
   QString getColumn(QString name);
@@ -35,6 +38,7 @@ public:
     out.push_back(alpha);
     out.push_back(beta);
     return out;
+//    QString table = cls.
     // select ALL rows and ALL columns from corresponding table
     // convert each row from ResultSet to instance of class T with appropriate id
     // fill each of new instances with column data
@@ -44,9 +48,9 @@ public:
   void setColumn(QString name, QString value);
   void destroy();
   void save();
-  void load();
-  void insert();
-  void update();
+
+  Entity& operator=(const Entity *other);
+  Entity& operator=(const Entity &other);
 
 private:
   static QSqlDatabase db;
@@ -57,6 +61,9 @@ private:
   static QString childrenQuery;
   static QString updateQuery;
 
+  void load();
+  void insert();
+  void update();
 
   QString values();
   QString keys();
