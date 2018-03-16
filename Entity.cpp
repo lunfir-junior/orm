@@ -30,9 +30,6 @@ Entity::Entity(int id, QObject *parent) : QObject(parent)
   m_id = id;
   m_isLoaded = false;
   m_isModified = false;
-
-//  this->load();
-//  # select from article where article_id=?
 }
 
 Entity::~Entity()
@@ -107,7 +104,8 @@ void Entity::load()
     }
   }
 
-  qDebug() << m_fields;
+  m_isLoaded = true;
+  qDebug() << "load: " << m_fields;
 }
 
 void Entity::insert()
@@ -127,7 +125,7 @@ void Entity::insert()
   values = this->values();
 
   QSqlQuery query(Entity::insertQuery.arg(m_table, keys, values));
-   qWarning() << "insert: " << query.lastError();
+  qWarning() << "insert: " << query.lastError();
 }
 
 void Entity::update()
@@ -146,8 +144,7 @@ void Entity::update()
   values = this->values();
 
   QSqlQuery query(Entity::updateQuery.arg(m_table, keys, values, QString::number(m_id)));
-
-   qWarning() << "update: " << query.lastError();
+  qWarning() << "update: " << query.lastError();
 }
 
 void Entity::destroy()
@@ -164,7 +161,13 @@ void Entity::destroy()
 void Entity::save()
 {
   m_table = QString::fromUtf8(metaObject()->className()).toLower();
-  // execute either insert or update query, depending on instance id
+
+  if ( m_isModified ) {
+    update();
+    m_isModified = false;
+  } else {
+    insert();
+  }
 }
 
 QString Entity::getColumn(QString name)
@@ -174,9 +177,18 @@ QString Entity::getColumn(QString name)
 
 void Entity::setColumn(QString name, QString value)
 {
-  m_fields.insert(name, value);
-}
+  if ( !db.isOpen() ) {
+    qWarning() << "No db connect";
+    return;
+  }
 
+  if ( !m_isLoaded )
+    load();
+
+  m_fields.insert(name, value);
+  qDebug() << "setColumn: " << m_fields;
+  m_isModified = true;
+}
 
 QString Entity::values()
 {
