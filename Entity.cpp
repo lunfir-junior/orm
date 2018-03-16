@@ -5,7 +5,7 @@ QString Entity::deleteQuery   = "DELETE FROM %1 WHERE %1_id=%2";
 QString Entity::insertQuery   = "INSERT INTO %1 (%2) VALUES (%3) RETURNING %1_id";
 QString Entity::listQuery     = "SELECT * FROM %1";
 QString Entity::selectQuery   = "SELECT * FROM %1 WHERE %1_id=%2";
-QString Entity::updateQuery   = "UPDATE %1 SET %2 WHERE %1_id=%3";
+QString Entity::updateQuery   = "UPDATE %1 SET (%2)=(%3) WHERE %1_id=%4";
 
 bool Entity::setDatabase(QString host, QString dbName, QString user, QString password)
 {
@@ -127,9 +127,7 @@ void Entity::insert()
   values = this->values();
 
   QSqlQuery query(Entity::insertQuery.arg(m_table, keys, values));
-
-  if ( !query.exec() )
-    qWarning() << query.lastError();
+   qWarning() << "insert: " << query.lastError();
 }
 
 void Entity::update()
@@ -143,17 +141,13 @@ void Entity::update()
     load();
 
   m_table = QString::fromUtf8(metaObject()->className()).toLower();
-  QString keys, values, set;
-  int len = m_fields.size();
+  QString keys, values;
   keys = this->keys();
   values = this->values();
 
-//  "UPDATE %1 SET %2 WHERE %1_id=%3";
-  QSqlQuery query(Entity::updateQuery.arg(m_table, ))
+  QSqlQuery query(Entity::updateQuery.arg(m_table, keys, values, QString::number(m_id)));
 
-  if ( !query.exec() )
-    qWarning() << query.lastError();
-  // execute an update query, built from fields keys and values
+   qWarning() << "update: " << query.lastError();
 }
 
 void Entity::destroy()

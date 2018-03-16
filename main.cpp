@@ -14,7 +14,8 @@ int main(int argc, char *argv[])
   /*bool ok = */Entity::setDatabase(QString("127.0.0.1"), QString("schema"), QString("lunfir"), QString("lunfir"));
   Section section(2);
 
-  section.insert();
+//  section.insert();
+  section.update();
 
 //  section.load();
   qDebug() << "created: " << section.getCreated();

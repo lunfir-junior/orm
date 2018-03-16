@@ -46,6 +46,7 @@ public:
   void save();
   void load();
   void insert();
+  void update();
 
 private:
   static QSqlDatabase db;
@@ -56,7 +57,6 @@ private:
   static QString childrenQuery;
   static QString updateQuery;
 
-  void update();
 
   QString values();
   QString keys();
